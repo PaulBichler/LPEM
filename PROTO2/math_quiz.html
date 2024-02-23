@@ -3,68 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Random Math Question</title>
 </head>
 <body>
-    <h1>Math Quiz</h1>
-    <div class="quiz">
-        <form class="question">
-            <p>What is 1 + 2?</p>
-            <div>
-                <input type="radio" id="option1">
-                <label for="option1" class="answer">3</label>
-            </div>
-            <div>
-                <input type="radio" id="option2">
-                <label for="option2">5</label>
-            </div>
-            <div>
-                <input type="radio" id="option3">
-                <label for="option3">1</label>
-            </div>
-            <div>
-                <input type="radio" id="option4">
-                <label for="option4">2</label>
-            </div>
-        </form>
-        <form class="question">
-            <p>What is 6 + 4?</p>
-            <div>
-                <input type="radio" id="option1">
-                <label for="option1">3</label>
-            </div>
-            <div>
-                <input type="radio" id="option2">
-                <label for="option2">7</label>
-            </div>
-            <div>
-                <input type="radio" id="option3">
-                <label for="option3">14</label>
-            </div>
-            <div>
-                <input type="radio" id="option4">
-                <label for="option4" class="answer">10</label>
-            </div>
-        </form>
-        <form class="question">
-            <p>What is 4 + 9?</p>
-            <div>
-                <input type="radio" for="option1">
-                <label for="option1">15</label>
-            </div>
-            <div>
-                <input type="radio" for="option2">
-                <label for="option2">20</label>
-            </div>
-            <div>
-                <input type="radio" for="option3">
-                <label for="option3" class="answer">13</label>
-            </div>
-            <div>
-                <input type="radio" for="option4">
-                <label for="option4">8</label>
-            </div>
-        </form>
-    </div>
+    <script>        
+        usedInts = [];
+
+        function generateUniqueRandom(min, max) {
+            let rand;
+
+            do {
+                rand = getRandom(min, max);
+            }
+            while(usedInts.indexOf(rand) != -1)
+
+            usedInts.push(rand);
+            return rand;
+        }
+
+        //Returns a random int in the range of min (inclusive) and max (inclusive)
+        function getRandom(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        //Generate a random Math addition question
+        let num1 = getRandom(0, 10);
+        let num2 = getRandom(0, 10);
+        let question = "What is " + num1 + " + " + num2 + "?"
+        let answer = num1 + num2;
+        usedInts.push(answer);
+
+        //Generate random answer options
+        let options = [
+            generateUniqueRandom(0, 20),
+            generateUniqueRandom(0, 20),
+            generateUniqueRandom(0, 20),
+            generateUniqueRandom(0, 20),
+        ];
+
+        //Replace a random option with the correct answer
+        let answerIndex = getRandom(0, options.length - 1)
+        options[answerIndex] = answer;
+
+        document.body.innerHTML = `
+            <h1>Math Question</h1>
+            <form class="question">
+                <p>` + question + `</p>
+        `;
+
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+
+            document.body.innerHTML += `
+                <div>
+                    <input type="radio" id="option` + (i + 1) + `" name="option" value="` + option + `" checked>
+                    <label for="option` + (i + 1) + `" ` + (i == answerIndex ? `class="answer"` : ``) + `>` + option + `</label>
+                </div>
+            `;
+        }
+
+        document.body.innerHTML += `
+            </form><br>
+            <button onclick="submitAnswer()">Check</button>
+            <p id="result"></p>
+        `;
+
+        function submitAnswer() {
+            let selectedValue = document.querySelector('input[name="option"]:checked').value;
+            document.getElementById("result").innerHTML = (selectedValue == answer ? "Correct!" : "Incorrect!");
+
+        }
+    </script>
 </body>
 </html>
